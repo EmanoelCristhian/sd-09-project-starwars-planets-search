@@ -1,50 +1,77 @@
 import React, { useContext, useEffect } from 'react';
 import StarWarsContext from '../Context/StarWarsContext';
+import FiltersComponent from './Filters';
 
 const Table = () => {
-  const { data, fetchPlanetsStarWars } = useContext(StarWarsContext);
+  const { data, fetchPlanetsStarWars, filter } = useContext(StarWarsContext);
 
   useEffect(() => {
     fetchPlanetsStarWars();
   }, []);
 
-  return (
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Rotation Period</th>
-        <th>Orbital Period</th>
-        <th>diameter</th>
-        <th>Climate</th>
-        <th>Gravity</th>
-        <th>Terrain</th>
-        <th>Surface Water</th>
-        <th>Population</th>
-        <th>Films</th>
-        <th>Created</th>
-        <th>Edited</th>
-        <th>URL</th>
+  const FILTER = {
+    filters: {
+      filterByName: {
+        name: filter,
+      },
+    },
+  };
+
+  const renderHeader = () => (
+    <tr>
+      <th>Name</th>
+      <th>Rotation Period</th>
+      <th>Orbital Period</th>
+      <th>diameter</th>
+      <th>Climate</th>
+      <th>Gravity</th>
+      <th>Terrain</th>
+      <th>Surface Water</th>
+      <th>Population</th>
+      <th>Films</th>
+      <th>Created</th>
+      <th>Edited</th>
+      <th>URL</th>
+    </tr>
+  );
+
+  const renderBody = (list) => (
+    list.map((planet, index) => (
+      <tr key={ index }>
+        <td data-testid="planet-name">{ planet.name }</td>
+        <td>{ planet.rotation_period }</td>
+        <td>{ planet.orbital_period }</td>
+        <td>{ planet.diameter }</td>
+        <td>{ planet.climate }</td>
+        <td>{ planet.gravity }</td>
+        <td>{ planet.terrain }</td>
+        <td>{ planet.surface_water }</td>
+        <td>{ planet.population }</td>
+        <td>{ planet.films }</td>
+        <td>{ planet.created }</td>
+        <td>{ planet.edited }</td>
+        <td>{ planet.url }</td>
       </tr>
-      <tbody>
-        { data.map((planet, index) => (
-          <tr key={ index }>
-            <td data-testid="planet-name">{ planet.name }</td>
-            <td>{ planet.rotation_period }</td>
-            <td>{ planet.orbital_period }</td>
-            <td>{ planet.diameter }</td>
-            <td>{ planet.climate }</td>
-            <td>{ planet.gravity }</td>
-            <td>{ planet.terrain }</td>
-            <td>{ planet.surface_water }</td>
-            <td>{ planet.population }</td>
-            <td>{ planet.films }</td>
-            <td>{ planet.created }</td>
-            <td>{ planet.edited }</td>
-            <td>{ planet.url }</td>
-          </tr>
-        )) }
-      </tbody>
-    </table>
+    ))
+  );
+
+  const filtersByName = () => {
+    const { filters: { filterByName } } = FILTER;
+    return data
+      .filter(({ name }) => name.match(filterByName.name) && name);
+  };
+
+  console.log(filtersByName());
+  return (
+    <>
+      <FiltersComponent />
+      <table>
+        <tbody>
+          { renderHeader() }
+          { filter ? renderBody(filtersByName()) : renderBody(data) }
+        </tbody>
+      </table>
+    </>
   );
 };
 

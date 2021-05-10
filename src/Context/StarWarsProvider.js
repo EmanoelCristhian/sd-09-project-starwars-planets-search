@@ -4,22 +4,8 @@ import getPlanetsStarWars from '../Services/fetchAPI';
 import StarWarsContext from './StarWarsContext';
 
 const StarWarsProvider = ({ children }) => {
-  const [data, setData] = useState([{
-    count: 0,
-    next: '',
-    previous: null,
-    results: {
-      name: '',
-      rotation_period: '',
-      orbital_period: '',
-      diameter: '',
-      climate: '',
-      gravity: '',
-      terrain: '',
-      surface_water: '',
-      url: '',
-    },
-  }]);
+  const [data, setData] = useState([]);
+  const [filter, setFilters] = useState('');
 
   const fetchPlanetsStarWars = async () => {
     const { results } = await getPlanetsStarWars();
@@ -30,6 +16,8 @@ const StarWarsProvider = ({ children }) => {
   const context = {
     data,
     fetchPlanetsStarWars,
+    setFilters,
+    filter,
   };
 
   return (
