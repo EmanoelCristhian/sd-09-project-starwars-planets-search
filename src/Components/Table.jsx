@@ -3,17 +3,31 @@ import StarWarsContext from '../Context/StarWarsContext';
 import FiltersComponent from './Filters';
 
 const Table = () => {
-  const { data, fetchPlanetsStarWars, filter } = useContext(StarWarsContext);
+  const {
+    data,
+    fetchPlanetsStarWars,
+    filterName,
+    filterColumn,
+    filterComparison,
+    filterNumber } = useContext(StarWarsContext);
 
   useEffect(() => {
     fetchPlanetsStarWars();
   }, []);
 
   const FILTER = {
-    filters: {
+    filters:
+    {
       filterByName: {
-        name: filter,
+        name: filterName,
       },
+      filterByNumericValues: [
+        {
+          column: filterColumn,
+          comparison: filterComparison,
+          value: Number(filterNumber),
+        },
+      ],
     },
   };
 
@@ -56,19 +70,51 @@ const Table = () => {
   );
 
   const filtersByName = () => {
-    const { filters: { filterByName } } = FILTER;
+    const { filters: { filterByName: { name } } } = FILTER;
     return data
-      .filter(({ name }) => name.match(filterByName.name) && name);
+      .filter((planet) => planet.name.match(name) && planet.name);
   };
 
-  console.log(filtersByName());
+  const filtersByBiggerThen = () => {
+    const { column, value } = FILTER.filters.filterByNumericValues[0];
+    return data
+      .filter((planet) => planet[column] > value);
+  };
+
+  const filtersByLessThen = () => {
+    const { column, value } = FILTER.filters.filterByNumericValues[0];
+    return data
+      .filter((planet) => planet[column] < value);
+  };
+
+  const filtersByIqualTo = () => {
+    const { column, value } = FILTER.filters.filterByNumericValues[0];
+    return data.filter((planet) => Number(planet[column]) === value);
+  };
+
+  const handleClickFilter = () => {
+    const { comparison } = FILTER.filters.filterByNumericValues[0];
+    if (comparison === 'igual a') return filtersByIqualTo();
+    if (comparison === 'menor que') return filtersByLessThen();
+    if (comparison === 'maior que') return filtersByBiggerThen();
+  };
+
+  const renderWithFilters = () => {
+    if (filterName) return renderBody(filtersByName());
+    return handleClickFilter()
+      ? renderBody(handleClickFilter())
+      : renderBody(data);
+  };
+
+  console.log(filtersByIqualTo());
+
   return (
     <>
-      <FiltersComponent />
+      <FiltersComponent handleClickFilter={ handleClickFilter } />
       <table>
         <tbody>
           { renderHeader() }
-          { filter ? renderBody(filtersByName()) : renderBody(data) }
+          { renderWithFilters() }
         </tbody>
       </table>
     </>

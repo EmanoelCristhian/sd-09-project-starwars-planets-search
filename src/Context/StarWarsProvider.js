@@ -5,7 +5,10 @@ import StarWarsContext from './StarWarsContext';
 
 const StarWarsProvider = ({ children }) => {
   const [data, setData] = useState([]);
-  const [filter, setFilters] = useState('');
+  const [filterName, setFilterName] = useState('');
+  const [filterColumn, setFilterColumn] = useState('');
+  const [filterComparison, setFilterComparison] = useState('');
+  const [filterNumber, setFilterNumber] = useState(0);
 
   const fetchPlanetsStarWars = async () => {
     const { results } = await getPlanetsStarWars();
@@ -16,8 +19,14 @@ const StarWarsProvider = ({ children }) => {
   const context = {
     data,
     fetchPlanetsStarWars,
-    setFilters,
-    filter,
+    setFilterName,
+    filterName,
+    filterColumn,
+    setFilterColumn,
+    filterComparison,
+    setFilterComparison,
+    filterNumber,
+    setFilterNumber,
   };
 
   return (
