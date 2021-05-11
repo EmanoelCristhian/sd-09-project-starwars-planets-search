@@ -38,7 +38,6 @@ const FiltersComponent = ({ handleClickFilter }) => {
           data-testid="column-filter"
           onChange={ (e) => getValueColumn(e) }
         >
-          <option> </option>
           <option value="population">population</option>
           <option value="orbital_period">orbital_period</option>
           <option value="diameter">diameter</option>
@@ -53,7 +52,6 @@ const FiltersComponent = ({ handleClickFilter }) => {
           data-testid="comparison-filter"
           onChange={ (e) => getValueComparison(e) }
         >
-          <option> </option>
           <option value="maior que">maior que</option>
           <option value="menor que">menor que</option>
           <option value="igual a">igual a</option>
@@ -95,7 +93,8 @@ const FiltersComponent = ({ handleClickFilter }) => {
   );
 };
 
-FiltersComponent.prototype = {
-  handleClickFilter: PropTypes.func.isRequired,
-};
+FiltersComponent.propTypes = {
+  handleClickFilter: PropTypes.func,
+}.isRequired;
+
 export default FiltersComponent;

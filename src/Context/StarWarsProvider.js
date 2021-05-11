@@ -8,7 +8,7 @@ const StarWarsProvider = ({ children }) => {
   const [filterName, setFilterName] = useState('');
   const [filterColumn, setFilterColumn] = useState('');
   const [filterComparison, setFilterComparison] = useState('');
-  const [filterNumber, setFilterNumber] = useState(0);
+  const [filterNumber, setFilterNumber] = useState('');
 
   const fetchPlanetsStarWars = async () => {
     const { results } = await getPlanetsStarWars();
