@@ -6,30 +6,12 @@ const Table = () => {
   const {
     data,
     fetchPlanetsStarWars,
-    filterName,
-    filterColumn,
-    filterComparison,
-    filterNumber } = useContext(StarWarsContext);
+    filters,
+  } = useContext(StarWarsContext);
 
   useEffect(() => {
     fetchPlanetsStarWars();
   }, []);
-
-  const FILTER = {
-    filters:
-    {
-      filterByName: {
-        name: filterName,
-      },
-      filterByNumericValues: [
-        {
-          column: filterColumn,
-          comparison: filterComparison,
-          value: Number(filterNumber),
-        },
-      ],
-    },
-  };
 
   const renderHeader = () => (
     <tr>
@@ -70,50 +52,48 @@ const Table = () => {
   );
 
   const filtersByName = () => {
-    const { filters: { filterByName: { name } } } = FILTER;
-    return data
-      .filter((planet) => planet.name.match(name) && planet.name);
+    const { filterByName: { name } } = filters;
+    return data.filter((planet) => planet.name.match(name) && planet.name);
   };
 
   const filtersByBiggerThen = () => {
-    const { column, value } = FILTER.filters.filterByNumericValues[0];
-    return data
-      .filter((planet) => planet[column] > value);
+    const { column = 0, value } = filters.filterByNumericValues[0];
+    return data.filter((planet) => Number(planet[column]) > value);
   };
 
   const filtersByLessThen = () => {
-    const { column, value } = FILTER.filters.filterByNumericValues[0];
-    return data
-      .filter((planet) => planet[column] < value);
+    const { column, value } = filters.filterByNumericValues[0];
+    return data.filter((planet) => Number(planet[column]) < value);
   };
 
   const filtersByIqualTo = () => {
-    const { column, value } = FILTER.filters.filterByNumericValues[0];
-    return data.filter((planet) => Number(planet[column]) === value);
+    const { column = 0, value } = filters.filterByNumericValues[0];
+    return data.filter((planet) => planet[column] === value);
   };
 
+  console.log(filtersByIqualTo());
+
   const handleClickFilter = () => {
-    const { comparison } = FILTER.filters.filterByNumericValues[0];
+    const { comparison } = filters.filterByNumericValues[0];
     if (comparison === 'igual a') return filtersByIqualTo();
     if (comparison === 'menor que') return filtersByLessThen();
     if (comparison === 'maior que') return filtersByBiggerThen();
   };
 
   const renderWithFilters = () => {
-    if (filterName) return renderBody(filtersByName());
+    if (filters.filterByName.name) return renderBody(filtersByName());
     return handleClickFilter()
       ? renderBody(handleClickFilter())
       : renderBody(data);
   };
 
-  console.log(filtersByIqualTo());
-
   return (
     <>
-      <FiltersComponent handleClickFilter={ handleClickFilter } />
+      <FiltersComponent />
       <table>
         <tbody>
           { renderHeader() }
+          {/* { renderBody(filtersByName()) } */ }
           { renderWithFilters() }
         </tbody>
       </table>

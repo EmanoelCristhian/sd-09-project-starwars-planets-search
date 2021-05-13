@@ -4,7 +4,6 @@ import { act } from 'react-dom/test-utils';
 import App from './App';
 import testData from './testData';
 
-
 const ROW_ROLE_SELECTOR = 'row';
 const COLUMN_ROLE_SELECTOR = 'columnheader';
 const INPUT_FILTER_NAME_SELECTOR = 'name-filter';

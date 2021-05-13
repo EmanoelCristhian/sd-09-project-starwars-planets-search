@@ -4,29 +4,19 @@ import StarWarsContext from '../Context/StarWarsContext';
 
 const FiltersComponent = ({ handleClickFilter }) => {
   const {
-    setFilterName,
-    setFilterColumn,
-    setFilterComparison,
-    setFilterNumber } = useContext(StarWarsContext);
+    filters,
+    setFilters,
+    columnValue,
+    setColumnValue } = useContext(StarWarsContext);
 
   const getValueInput = ({ target }) => {
     const { value } = target;
-    setFilterName(value);
+    setFilters({ ...filters, filterByName: { name: value } });
   };
 
-  const getValueNumberInput = ({ target }) => {
-    const { value } = target;
-    setFilterNumber(value);
-  };
-
-  const getValueColumn = ({ target }) => {
-    const { value } = target;
-    setFilterColumn(value);
-  };
-
-  const getValueComparison = ({ target }) => {
-    const { value } = target;
-    setFilterComparison(value);
+  const getValuesNumberInput = ({ target }) => {
+    const { value, name } = target;
+    setColumnValue({ ...columnValue, [name]: value });
   };
 
   const renderFilters = () => (
@@ -34,10 +24,12 @@ const FiltersComponent = ({ handleClickFilter }) => {
       <label htmlFor="colums">
         Colunas:
         <select
+          name="column"
           id="colums"
           data-testid="column-filter"
-          onChange={ (e) => getValueColumn(e) }
+          onChange={ (e) => getValuesNumberInput(e) }
         >
+          <option value=""> </option>
           <option value="population">population</option>
           <option value="orbital_period">orbital_period</option>
           <option value="diameter">diameter</option>
@@ -48,21 +40,23 @@ const FiltersComponent = ({ handleClickFilter }) => {
       <label htmlFor="comparison">
         Comparação
         <select
+          name="comparison"
           id="comparison"
           data-testid="comparison-filter"
-          onChange={ (e) => getValueComparison(e) }
+          onChange={ (e) => getValuesNumberInput(e) }
         >
+          <option value=""> </option>
           <option value="maior que">maior que</option>
           <option value="menor que">menor que</option>
           <option value="igual a">igual a</option>
         </select>
         <input
           type="number"
-          name="value-filter"
+          name="value"
           id="value-filter"
           data-testid="value-filter"
           placeholder="Digite um numero"
-          onChange={ (e) => getValueNumberInput(e) }
+          onChange={ (e) => getValuesNumberInput(e) }
         />
       </label>
     </>
@@ -83,7 +77,7 @@ const FiltersComponent = ({ handleClickFilter }) => {
       </label>
       {renderFilters() }
       <button
-        onClick={ () => handleClickFilter() }
+        onClick={ () => {} }
         type="button"
         data-testid="button-filter"
       >
@@ -98,3 +92,36 @@ FiltersComponent.propTypes = {
 }.isRequired;
 
 export default FiltersComponent;
+
+/*
+  const filtersByBiggerThen = () => {
+    const { column, value } = FILTER.filters.filterByNumericValues[0];
+    return data
+      .filter((planet) => planet[column] > value);
+  };
+
+  const filtersByLessThen = () => {
+    const { column, value } = FILTER.filters.filterByNumericValues[0];
+    return data
+      .filter((planet) => planet[column] < value);
+  };
+
+  const filtersByIqualTo = () => {
+    const { column, value } = FILTER.filters.filterByNumericValues[0];
+    return data.filter((planet) => Number(planet[column]) === value);
+  };
+
+  const handleClickFilter = () => {
+    const { comparison } = FILTER.filters.filterByNumericValues[0];
+    if (comparison === 'igual a') return filtersByIqualTo();
+    if (comparison === 'menor que') return filtersByLessThen();
+    if (comparison === 'maior que') return filtersByBiggerThen();
+  };
+
+  const renderWithFilters = () => {
+    if (filterName) return renderBody(filtersByName());
+    return handleClickFilter()
+      ? renderBody(handleClickFilter())
+      : renderBody(data);
+  };
+*/

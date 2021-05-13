@@ -1,14 +1,28 @@
 import { shape } from 'prop-types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import getPlanetsStarWars from '../Services/fetchAPI';
 import StarWarsContext from './StarWarsContext';
 
 const StarWarsProvider = ({ children }) => {
   const [data, setData] = useState([]);
-  const [filterName, setFilterName] = useState('');
-  const [filterColumn, setFilterColumn] = useState('');
-  const [filterComparison, setFilterComparison] = useState('');
-  const [filterNumber, setFilterNumber] = useState('');
+  const [columnValue, setColumnValue] = useState({
+    column: '',
+    comparison: '',
+    value: 0,
+  });
+
+  const [filters, setFilters] = useState({
+    filterByName: {
+      name: '',
+    },
+    filterByNumericValues: [columnValue],
+  });
+
+  useEffect(() => {
+    setFilters({
+      ...filters, filterByNumericValues: [{ ...columnValue }],
+    });
+  }, [columnValue]);
 
   const fetchPlanetsStarWars = async () => {
     const { results } = await getPlanetsStarWars();
@@ -19,14 +33,10 @@ const StarWarsProvider = ({ children }) => {
   const context = {
     data,
     fetchPlanetsStarWars,
-    setFilterName,
-    filterName,
-    filterColumn,
-    setFilterColumn,
-    filterComparison,
-    setFilterComparison,
-    filterNumber,
-    setFilterNumber,
+    setFilters,
+    filters,
+    columnValue,
+    setColumnValue,
   };
 
   return (
