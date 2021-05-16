@@ -30,6 +30,10 @@ const StarWarsProvider = ({ children }) => {
     setData(results);
   };
 
+  useEffect(() => {
+    fetchPlanetsStarWars();
+  }, []);
+
   const context = {
     data,
     fetchPlanetsStarWars,

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import StarWarsContext from '../Context/StarWarsContext';
 
 const FiltersComponent = ({ handleClickFilter }) => {
@@ -9,9 +9,14 @@ const FiltersComponent = ({ handleClickFilter }) => {
     columnValue,
     setColumnValue } = useContext(StarWarsContext);
 
+  const [columns, setColumns] = useState([
+    'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
+  const { filterByName, filterByNumericValues } = filters;
+
   const getValueInput = ({ target }) => {
     const { value } = target;
     setFilters({ ...filters, filterByName: { name: value } });
+    handleClickFilter(value);
   };
 
   const getValuesNumberInput = ({ target }) => {
@@ -29,12 +34,9 @@ const FiltersComponent = ({ handleClickFilter }) => {
           data-testid="column-filter"
           onChange={ (e) => getValuesNumberInput(e) }
         >
-          <option value=""> </option>
-          <option value="population">population</option>
-          <option value="orbital_period">orbital_period</option>
-          <option value="diameter">diameter</option>
-          <option value="rotation_period">rotation_period</option>
-          <option value="surface_water">surface_water</option>
+          { columns.map((col) => (
+            <option key={ col } value={ col }>{ col }</option>
+          )) }
         </select>
       </label>
       <label htmlFor="comparison">
@@ -72,12 +74,15 @@ const FiltersComponent = ({ handleClickFilter }) => {
           id="ask"
           data-testid="name-filter"
           placeholder="Digite o planeta"
-          onChange={ (e) => getValueInput(e) }
+          onChange={ (e) => { getValueInput(e); } }
         />
       </label>
       {renderFilters() }
       <button
-        onClick={ () => {} }
+        onClick={ () => {
+          const { name } = filterByName;
+          handleClickFilter(name);
+        } }
         type="button"
         data-testid="button-filter"
       >
@@ -92,36 +97,3 @@ FiltersComponent.propTypes = {
 }.isRequired;
 
 export default FiltersComponent;
-
-/*
-  const filtersByBiggerThen = () => {
-    const { column, value } = FILTER.filters.filterByNumericValues[0];
-    return data
-      .filter((planet) => planet[column] > value);
-  };
-
-  const filtersByLessThen = () => {
-    const { column, value } = FILTER.filters.filterByNumericValues[0];
-    return data
-      .filter((planet) => planet[column] < value);
-  };
-
-  const filtersByIqualTo = () => {
-    const { column, value } = FILTER.filters.filterByNumericValues[0];
-    return data.filter((planet) => Number(planet[column]) === value);
-  };
-
-  const handleClickFilter = () => {
-    const { comparison } = FILTER.filters.filterByNumericValues[0];
-    if (comparison === 'igual a') return filtersByIqualTo();
-    if (comparison === 'menor que') return filtersByLessThen();
-    if (comparison === 'maior que') return filtersByBiggerThen();
-  };
-
-  const renderWithFilters = () => {
-    if (filterName) return renderBody(filtersByName());
-    return handleClickFilter()
-      ? renderBody(handleClickFilter())
-      : renderBody(data);
-  };
-*/

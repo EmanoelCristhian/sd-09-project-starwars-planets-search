@@ -1,17 +1,15 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import StarWarsContext from '../Context/StarWarsContext';
 import FiltersComponent from './Filters';
 
 const Table = () => {
-  const {
-    data,
-    fetchPlanetsStarWars,
-    filters,
-  } = useContext(StarWarsContext);
+  const { data, filters } = useContext(StarWarsContext);
+  const [planets, setPlanets] = useState([]);
+  const [action, setAction] = useState(false);
 
   useEffect(() => {
-    fetchPlanetsStarWars();
-  }, []);
+    setPlanets(data);
+  }, [data]);
 
   const renderHeader = () => (
     <tr>
@@ -51,50 +49,35 @@ const Table = () => {
     ))
   );
 
-  const filtersByName = () => {
-    const { filterByName: { name } } = filters;
-    return data.filter((planet) => planet.name.match(name) && planet.name);
+  const filterByName = (name) => {
+    // const { filterByName: { name } } = filters;
+    const listByName = data.filter((planet) => planet.name.match(name));
+    return listByName;
   };
 
-  const filtersByBiggerThen = () => {
-    const { column = 0, value } = filters.filterByNumericValues[0];
-    return data.filter((planet) => Number(planet[column]) > value);
+  const filtersByNumber = (listPlanets) => {
+    const { value, column, comparison } = filters.filterByNumericValues[0];
+    return listPlanets.filter((planet) => {
+      if (comparison === 'igual a') return Number(planet[column]) === Number(value);
+      if (comparison === 'menor que') return Number(planet[column]) < Number(value);
+      if (comparison === 'maior que') return Number(planet[column]) > Number(value);
+      return true;
+    });
   };
 
-  const filtersByLessThen = () => {
-    const { column, value } = filters.filterByNumericValues[0];
-    return data.filter((planet) => Number(planet[column]) < value);
-  };
-
-  const filtersByIqualTo = () => {
-    const { column = 0, value } = filters.filterByNumericValues[0];
-    return data.filter((planet) => planet[column] === value);
-  };
-
-  console.log(filtersByIqualTo());
-
-  const handleClickFilter = () => {
-    const { comparison } = filters.filterByNumericValues[0];
-    if (comparison === 'igual a') return filtersByIqualTo();
-    if (comparison === 'menor que') return filtersByLessThen();
-    if (comparison === 'maior que') return filtersByBiggerThen();
-  };
-
-  const renderWithFilters = () => {
-    if (filters.filterByName.name) return renderBody(filtersByName());
-    return handleClickFilter()
-      ? renderBody(handleClickFilter())
-      : renderBody(data);
+  const handleClickFilter = (value) => {
+    setPlanets(filtersByNumber(filterByName(value)));
   };
 
   return (
     <>
-      <FiltersComponent />
+      <FiltersComponent
+        handleClickFilter={ handleClickFilter }
+      />
       <table>
         <tbody>
           { renderHeader() }
-          {/* { renderBody(filtersByName()) } */ }
-          { renderWithFilters() }
+          { renderBody(planets) }
         </tbody>
       </table>
     </>
