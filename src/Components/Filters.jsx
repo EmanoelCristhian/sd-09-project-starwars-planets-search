@@ -11,6 +11,7 @@ const FiltersComponent = ({ handleClickFilter }) => {
 
   const [columns, setColumns] = useState([
     'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
+
   const { filterByName, filterByNumericValues } = filters;
 
   const getValueInput = ({ target }) => {
@@ -22,6 +23,11 @@ const FiltersComponent = ({ handleClickFilter }) => {
   const getValuesNumberInput = ({ target }) => {
     const { value, name } = target;
     setColumnValue({ ...columnValue, [name]: value });
+  };
+
+  const removeColumn = (column) => {
+    console.log([column]);
+    setColumns(columns.filter((item) => item !== column));
   };
 
   const renderFilters = () => (
@@ -81,7 +87,9 @@ const FiltersComponent = ({ handleClickFilter }) => {
       <button
         onClick={ () => {
           const { name } = filterByName;
+          const { column } = columnValue;
           handleClickFilter(name);
+          removeColumn(column);
         } }
         type="button"
         data-testid="button-filter"

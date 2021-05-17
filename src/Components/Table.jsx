@@ -50,7 +50,6 @@ const Table = () => {
   );
 
   const filterByName = (name) => {
-    // const { filterByName: { name } } = filters;
     const listByName = data.filter((planet) => planet.name.match(name));
     return listByName;
   };
